@@ -1,0 +1,12 @@
+{
+  "domain": "mojelektro",
+  "name": "Moj Elektro",
+  "codeowners": ["@uzorcic"],
+  "config_flow": true,
+  "documentation": "https://github.com/uzorcic/mojelektro",
+  "integration_type": "device",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/uzorcic/mojelektro/issues",
+  "requirements": [],
+  "version": "0.1.1"
+}

@@ -1,0 +1,8 @@
+{
+  "errors": [
+    {
+      "koda": "E_4_000",
+      "opis": "Napaka v vhodnih podatkih: Vrednost 'Neveljavni datumski interval, začetek in konec sta lahko največ 35 dni narazen in največ 2 leti v preteklosti' je nepricakovana za 'date interval'"
+    }
+  ]
+}
