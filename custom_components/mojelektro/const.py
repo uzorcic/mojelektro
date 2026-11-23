@@ -17,7 +17,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 DOMAIN = "mojelektro"
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 CONF_TOKEN = "token"
 CONF_USAGE_POINT = "usage_point"
@@ -32,7 +32,14 @@ API_TOKEN_HEADER = "X-API-TOKEN"
 # wider span with E_4_000: start and end may be at most 35 days apart.
 MAX_RANGE_DAYS = 35
 REQUEST_TIMEOUT_SECONDS = 30
-UPDATE_INTERVAL = timedelta(hours=6)
+
+# One fetch per day at 00:05 in the Home Assistant time zone. There is no
+# interval polling. A failed nightly fetch may be retried a few times.
+DAILY_REFRESH_HOUR = 0
+DAILY_REFRESH_MINUTE = 5
+DAILY_REFRESH_SECOND = 0
+DAILY_RETRY_DELAY = timedelta(minutes=30)
+DAILY_RETRY_ATTEMPTS = 2
 
 # Enotni identifikator merilnega mesta, OpenAPI schema EnotniIdentifikatorMerilnegaMesta.
 EIMM_PATTERN = r"^\d{1,2}-\d+$"

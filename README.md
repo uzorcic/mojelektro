@@ -76,7 +76,7 @@ OpenAPI ne zapiše številčne omejitve datuma. Živi API zavrne predolg interva
 - od januarja do začetka februarja zadošča en klic od 1. januarja do danes,
 - pozneje sta klica dva: 1.–7. januar (osnova leta) in tekoči mesec (zadnje stanje in mesečna bilanca).
 
-Osveževanje je na 6 ur (`iot_class: cloud_polling`). Katalog registrov in opis merilnega mesta se prebereta enkrat na zagon. Uradne omejitve števila klicev specifikacija ne objavi; na forumih se omenja nekaj klicev na 15 minut, kar ni uradna številka. Ta ritem ostane daleč pod tem.
+Osveževanje ni intervalno. Ob zagonu in ob ponovnem nalaganju integracije se podatki preberejo takoj, nato pa enkrat na dan ob **00:05** po lokalnem času Home Assistanta (`async_track_time_change`). Koordinator ima `update_interval` nastavljen na `None`. Če klic ob 00:05 spodleti, sledita največ dva ponovna poskusa v razmiku 30 minut; po tem integracija počaka do naslednjega dne. Neveljaven žeton (HTTP 401 ali 403) ponovitve ne sproži, ampak tok ponovne prijave. Katalog registrov in opis merilnega mesta se prebereta enkrat na zagon. Uradne omejitve števila klicev specifikacija ne objavi; na forumih se omenja nekaj klicev na 15 minut, kar ni uradna številka. Dnevni ritem ostane daleč pod tem: običajno eden ali dva klica `meter-readings` na dan.
 
 Koledarsko leto in mesec se ob vsakem osveževanju izračunata iz časovnega pasu Home Assistanta. 1. januarja se osnova prestavi na novo leto. Za Slovenijo naj bo časovni pas `Europe/Ljubljana`.
 

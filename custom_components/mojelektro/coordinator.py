@@ -1,13 +1,16 @@
-"""Polling coordinator for one Moj Elektro metering point."""
+"""Scheduled refresh for one Moj Elektro metering point."""
 
 from __future__ import annotations
 
+import asyncio
+from datetime import datetime
 import logging
 import re
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.event import async_call_later, async_track_time_change
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
@@ -27,11 +30,15 @@ from .balance import (
 )
 from .const import (
     CONF_USAGE_POINT,
+    DAILY_REFRESH_HOUR,
+    DAILY_REFRESH_MINUTE,
+    DAILY_REFRESH_SECOND,
+    DAILY_RETRY_ATTEMPTS,
+    DAILY_RETRY_DELAY,
     DOMAIN,
     EIMM_PATTERN,
     READING_TYPE_EXPORT_STATE,
     READING_TYPE_IMPORT_STATE,
-    UPDATE_INTERVAL,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -41,9 +48,14 @@ _EIMM_RE = re.compile(EIMM_PATTERN)
 class MojElektroCoordinator(DataUpdateCoordinator[BalanceSnapshot]):
     """Fetch daily register states and compute the yearly and monthly balance.
 
-    Each update reads the calendar date from Home Assistant's time zone, so the
-    baseline moves to 1 January as soon as that date arrives. Readings are not
-    cached across updates.
+    ``update_interval`` stays ``None``. Home Assistant loads data once when the
+    entry is set up, then ``async_track_time_change`` fetches again at 00:05 in
+    the Home Assistant time zone. A failed nightly fetch is retried a limited
+    number of times and then waits until the next 00:05.
+
+    Each update reads the calendar date from that time zone, so the baseline
+    moves to 1 January as soon as that date arrives. Readings are not cached
+    across updates.
     """
 
     def __init__(
@@ -57,7 +69,7 @@ class MojElektroCoordinator(DataUpdateCoordinator[BalanceSnapshot]):
             _LOGGER,
             config_entry=entry,
             name=DOMAIN,
-            update_interval=UPDATE_INTERVAL,
+            update_interval=None,
         )
         self.client = client
         self.usage_point: str = entry.data[CONF_USAGE_POINT]
@@ -66,6 +78,86 @@ class MojElektroCoordinator(DataUpdateCoordinator[BalanceSnapshot]):
         self._export_type = READING_TYPE_EXPORT_STATE
         self._types_loaded = False
         self._meter_loaded = False
+        self._unsub_daily: CALLBACK_TYPE | None = None
+        self._unsub_retry: CALLBACK_TYPE | None = None
+        self._retries_left = DAILY_RETRY_ATTEMPTS
+        self._refresh_lock = asyncio.Lock()
+
+    def async_schedule_daily_refresh(self) -> None:
+        """Listen for 00:05 local time. Safe to call again after a reload."""
+        self._cancel_daily()
+        self._unsub_daily = async_track_time_change(
+            self.hass,
+            self._handle_daily_refresh,
+            hour=DAILY_REFRESH_HOUR,
+            minute=DAILY_REFRESH_MINUTE,
+            second=DAILY_REFRESH_SECOND,
+        )
+
+    async def async_shutdown(self) -> None:
+        """Cancel the daily fetch and any pending retry."""
+        self._cancel_daily()
+        self._cancel_retry()
+        await super().async_shutdown()
+
+    async def _handle_daily_refresh(self, _now: datetime) -> None:
+        """Fetch at 00:05 and give this night a fresh retry budget."""
+        async with self._refresh_lock:
+            self._cancel_retry()
+            self._retries_left = DAILY_RETRY_ATTEMPTS
+        _LOGGER.debug("Daily Moj Elektro refresh for %s", self.usage_point)
+        await self._refresh_or_retry()
+
+    async def _handle_retry(self, _now: datetime) -> None:
+        """One delayed attempt after a failed nightly fetch."""
+        self._unsub_retry = None
+        await self._refresh_or_retry()
+
+    async def _refresh_or_retry(self) -> None:
+        """Refresh once. On failure, schedule a short retry while attempts remain."""
+        async with self._refresh_lock:
+            if self._shutdown_requested:
+                return
+            await self.async_refresh()
+            if self.last_update_success or self._shutdown_requested:
+                return
+            if isinstance(self.last_exception, ConfigEntryAuthFailed):
+                _LOGGER.debug(
+                    "Moj Elektro rejected the token for %s; waiting for reauth",
+                    self.usage_point,
+                )
+                return
+            if self._retries_left <= 0:
+                _LOGGER.warning(
+                    "Moj Elektro refresh failed for %s; next attempt at %02d:%02d",
+                    self.usage_point,
+                    DAILY_REFRESH_HOUR,
+                    DAILY_REFRESH_MINUTE,
+                )
+                return
+            self._retries_left -= 1
+            delay_minutes = int(DAILY_RETRY_DELAY.total_seconds() // 60)
+            _LOGGER.warning(
+                "Moj Elektro refresh failed for %s; retrying in %s minutes",
+                self.usage_point,
+                delay_minutes,
+            )
+            self._cancel_retry()
+            self._unsub_retry = async_call_later(
+                self.hass,
+                DAILY_RETRY_DELAY,
+                self._handle_retry,
+            )
+
+    def _cancel_daily(self) -> None:
+        if self._unsub_daily is not None:
+            self._unsub_daily()
+            self._unsub_daily = None
+
+    def _cancel_retry(self) -> None:
+        if self._unsub_retry is not None:
+            self._unsub_retry()
+            self._unsub_retry = None
 
     async def _async_update_data(self) -> BalanceSnapshot:
         try:
