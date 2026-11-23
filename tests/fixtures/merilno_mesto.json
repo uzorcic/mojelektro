@@ -1,0 +1,18 @@
+{
+  "naziv": "Hiša",
+  "naslov": "Slovenska ulica 1, Ljubljana",
+  "identifikator": {
+    "enotniIdentifikatorMerilnegaMesta": "3-123456",
+    "gsrn": "383000000000000000"
+  },
+  "merilneTocke": [
+    {
+      "gsrn": "383000000000000001",
+      "vrsta": "OMTO"
+    },
+    {
+      "gsrn": "383000000000000002",
+      "vrsta": "MTP"
+    }
+  ]
+}

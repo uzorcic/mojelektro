@@ -1,0 +1,46 @@
+[
+  {
+    "naziv": "Prejeta 15 minutna delovna energija",
+    "oznaka": "A+",
+    "tip": "delovna prejem",
+    "perioda": "15 min",
+    "opis": "15 minutna energija, A+, kWh",
+    "readingType": "32.0.2.4.1.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "readingTypeBrezObracuna": "0.0.2.4.1.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "readingTypeObracun": "8.0.2.4.1.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "vrsta": "KOLICINA"
+  },
+  {
+    "naziv": "Oddana 15 minutna delovna energija",
+    "oznaka": "A-",
+    "tip": "delovna oddaja",
+    "perioda": "15 min",
+    "opis": "15 minutna energija, A-, kWh",
+    "readingType": "32.0.2.4.19.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "readingTypeBrezObracuna": "0.0.2.4.19.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "readingTypeObracun": "8.0.2.4.19.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "vrsta": "KOLICINA"
+  },
+  {
+    "naziv": "Prejeta delovna energija ET",
+    "oznaka": "A+_T0",
+    "tip": "delovna prejem ET",
+    "perioda": "24 h",
+    "opis": "24 urno stanje, A+, kWh, T0",
+    "readingType": "32.0.4.1.1.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "readingTypeBrezObracuna": "0.0.4.1.1.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "readingTypeObracun": "8.0.4.1.1.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "vrsta": "STANJE"
+  },
+  {
+    "naziv": "Oddana delovna energija ET",
+    "oznaka": "A-_T0",
+    "tip": "delovna oddaja ET",
+    "perioda": "24 h",
+    "opis": "24 urno stanje, A-, kWh, T0",
+    "readingType": "32.0.4.1.19.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "readingTypeBrezObracuna": "0.0.4.1.19.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "readingTypeObracun": "8.0.4.1.19.2.12.0.0.0.0.0.0.0.0.3.72.0",
+    "vrsta": "STANJE"
+  }
+]

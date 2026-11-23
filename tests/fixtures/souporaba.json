@@ -1,0 +1,12 @@
+[
+  {
+    "sifra": 1001,
+    "datumVloge": "2024-05-01",
+    "eiMmOddajnika": "3-123456",
+    "eiMmPrejemnika": "4-654321",
+    "statusZahteve": "POTRJENA",
+    "datumZacetka": "2024-06-01",
+    "datumKonca": "2026-12-31",
+    "delez": 50
+  }
+]

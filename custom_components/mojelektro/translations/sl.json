@@ -1,0 +1,80 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Povezava z Moj Elektro",
+        "description": "Ustvari API žeton v portalu Moj Elektro (profil, API storitve). Integracija ga pošlje v glavi X-API-TOKEN.",
+        "data": {
+          "token": "API žeton"
+        },
+        "data_description": {
+          "token": "Žeton se pokaže samo ob ustvarjanju. Shrani se samo v Home Assistantu."
+        }
+      },
+      "select_meter": {
+        "title": "Merilno mesto",
+        "description": "Identifikatorji prihajajo iz GET /souporaba. API nima seznama vseh merilnih mest, zato ga lahko vpišeš tudi ročno.",
+        "data": {
+          "usage_point": "Merilno mesto"
+        }
+      },
+      "meter": {
+        "title": "Merilno mesto",
+        "description": "Vpiši enotni identifikator merilnega mesta (na primer 3-123456) ali GSRN. EIMM je na kartici merilnega mesta v portalu Moj Elektro.",
+        "data": {
+          "usage_point": "EIMM ali GSRN"
+        },
+        "data_description": {
+          "usage_point": "To je parameter usagePoint. EIMM ima obliko, kot je 3-123456."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Posodobi API žeton",
+        "description": "Žeton za merilno mesto {usage_point} je bil zavrnjen. Ustvari novega in ga prilepi sem.",
+        "data": {
+          "token": "API žeton"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "API žeton je bil zavrnjen (HTTP 401 ali 403).",
+      "cannot_connect": "Do API-ja Moj Elektro se ni bilo mogoče povezati.",
+      "invalid_usage_point": "Merilno mesto ni bilo najdeno ali žeton do njega nima dostopa.",
+      "unknown": "Nepričakovana napaka API-ja Moj Elektro."
+    },
+    "abort": {
+      "already_configured": "To merilno mesto je že dodano.",
+      "reauth_successful": "API žeton je posodobljen.",
+      "unknown": "Vnos nastavitev ne obstaja več."
+    }
+  },
+  "selector": {
+    "meter_choice": {
+      "options": {
+        "__manual__": "Vnesi ročno"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "yearly_consumption": {
+        "name": "Letna prejeta energija"
+      },
+      "yearly_delivered": {
+        "name": "Letna oddana energija"
+      },
+      "yearly_balance": {
+        "name": "Letna bilanca energije"
+      },
+      "monthly_consumption": {
+        "name": "Mesečna prejeta energija"
+      },
+      "monthly_delivered": {
+        "name": "Mesečna oddana energija"
+      },
+      "monthly_balance": {
+        "name": "Mesečna bilanca energije"
+      }
+    }
+  }
+}

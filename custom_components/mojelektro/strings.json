@@ -1,0 +1,80 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Moj Elektro",
+        "description": "Create an API token in the Moj Elektro portal (profile, API services). The integration sends it in the X-API-TOKEN header.",
+        "data": {
+          "token": "API token"
+        },
+        "data_description": {
+          "token": "The token is shown once when you create it. It is stored only in Home Assistant."
+        }
+      },
+      "select_meter": {
+        "title": "Metering point",
+        "description": "These identifiers come from GET /souporaba. The API has no list of every metering point, so you can also enter one manually.",
+        "data": {
+          "usage_point": "Metering point"
+        }
+      },
+      "meter": {
+        "title": "Metering point",
+        "description": "Enter the enotni identifikator merilnega mesta (for example 3-123456) or a GSRN. The EIMM is on the metering point in the Moj Elektro portal.",
+        "data": {
+          "usage_point": "EIMM or GSRN"
+        },
+        "data_description": {
+          "usage_point": "This is the usagePoint parameter. An EIMM looks like 3-123456."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Update API token",
+        "description": "The token for metering point {usage_point} was rejected. Create a new one and paste it here.",
+        "data": {
+          "token": "API token"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The API token was rejected (HTTP 401 or 403).",
+      "cannot_connect": "Could not reach the Moj Elektro API.",
+      "invalid_usage_point": "This metering point was not found, or the token cannot access it.",
+      "unknown": "Unexpected error from the Moj Elektro API."
+    },
+    "abort": {
+      "already_configured": "This metering point is already configured.",
+      "reauth_successful": "The API token was updated.",
+      "unknown": "The config entry no longer exists."
+    }
+  },
+  "selector": {
+    "meter_choice": {
+      "options": {
+        "__manual__": "Enter manually"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "yearly_consumption": {
+        "name": "Yearly imported energy"
+      },
+      "yearly_delivered": {
+        "name": "Yearly exported energy"
+      },
+      "yearly_balance": {
+        "name": "Yearly energy balance"
+      },
+      "monthly_consumption": {
+        "name": "Monthly imported energy"
+      },
+      "monthly_delivered": {
+        "name": "Monthly exported energy"
+      },
+      "monthly_balance": {
+        "name": "Monthly energy balance"
+      }
+    }
+  }
+}
