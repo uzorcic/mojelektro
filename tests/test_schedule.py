@@ -1,4 +1,4 @@
-"""Daily 00:05 refresh, with a short retry and no interval polling."""
+"""Daily 06:05 refresh, with a short retry and no interval polling."""
 
 from __future__ import annotations
 
@@ -43,7 +43,7 @@ def _entry() -> MockConfigEntry:
 
 
 def _next_daily(after: datetime) -> datetime:
-    """Next 00:05 strictly after ``after`` in the Home Assistant time zone."""
+    """Next 06:05 strictly after ``after`` in the Home Assistant time zone."""
     local = dt_util.as_local(after)
     target = local.replace(
         hour=DAILY_REFRESH_HOUR,
@@ -62,7 +62,7 @@ async def _flush(hass) -> None:
 
 @pytest.mark.usefixtures("enable_custom_integrations")
 @pytest.mark.asyncio
-async def test_fetches_at_startup_and_at_0005_without_interval_polling(hass) -> None:
+async def test_fetches_at_startup_and_at_0605_without_interval_polling(hass) -> None:
     entry = _entry()
     entry.add_to_hass(hass)
     calls: list[tuple] = []
@@ -106,7 +106,7 @@ async def test_fetches_at_startup_and_at_0005_without_interval_polling(hass) -> 
 
 @pytest.mark.usefixtures("enable_custom_integrations")
 @pytest.mark.asyncio
-async def test_failed_nightly_fetch_retries_then_stops(hass) -> None:
+async def test_failed_daily_fetch_retries_then_stops(hass) -> None:
     entry = _entry()
     entry.add_to_hass(hass)
     calls = 0
@@ -149,7 +149,7 @@ async def test_failed_nightly_fetch_retries_then_stops(hass) -> None:
 
 @pytest.mark.usefixtures("enable_custom_integrations")
 @pytest.mark.asyncio
-async def test_auth_failure_at_0005_does_not_schedule_a_retry(hass) -> None:
+async def test_auth_failure_at_0605_does_not_schedule_a_retry(hass) -> None:
     entry = _entry()
     entry.add_to_hass(hass)
     calls = 0

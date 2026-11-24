@@ -17,7 +17,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 DOMAIN = "mojelektro"
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 CONF_TOKEN = "token"
 CONF_USAGE_POINT = "usage_point"
@@ -33,9 +33,9 @@ API_TOKEN_HEADER = "X-API-TOKEN"
 MAX_RANGE_DAYS = 35
 REQUEST_TIMEOUT_SECONDS = 30
 
-# One fetch per day at 00:05 in the Home Assistant time zone. There is no
-# interval polling. A failed nightly fetch may be retried a few times.
-DAILY_REFRESH_HOUR = 0
+# One fetch per day at 06:05 in the Home Assistant time zone. There is no
+# interval polling. A failed daily fetch may be retried a few times.
+DAILY_REFRESH_HOUR = 6
 DAILY_REFRESH_MINUTE = 5
 DAILY_REFRESH_SECOND = 0
 DAILY_RETRY_DELAY = timedelta(minutes=30)
