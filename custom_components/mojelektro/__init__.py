@@ -24,7 +24,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     client = MojElektroClient(async_get_clientsession(hass), entry.data[CONF_TOKEN])
     coordinator = MojElektroCoordinator(hass, entry, client)
     await coordinator.async_config_entry_first_refresh()
-    # Arm the daily 00:05 refresh only after the startup fetch succeeds.
+    # Arm the daily 06:05 refresh only after the startup fetch succeeds.
     # A failed startup raises ConfigEntryNotReady and must not leave a listener
     # behind for the retry that Home Assistant will run later.
     coordinator.async_schedule_daily_refresh()

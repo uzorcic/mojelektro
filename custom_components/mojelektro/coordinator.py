@@ -49,9 +49,9 @@ class MojElektroCoordinator(DataUpdateCoordinator[BalanceSnapshot]):
     """Fetch daily register states and compute the yearly and monthly balance.
 
     ``update_interval`` stays ``None``. Home Assistant loads data once when the
-    entry is set up, then ``async_track_time_change`` fetches again at 00:05 in
-    the Home Assistant time zone. A failed nightly fetch is retried a limited
-    number of times and then waits until the next 00:05.
+    entry is set up, then ``async_track_time_change`` fetches again at 06:05 in
+    the Home Assistant time zone. A failed daily fetch is retried a limited
+    number of times and then waits until the next 06:05.
 
     Each update reads the calendar date from that time zone, so the baseline
     moves to 1 January as soon as that date arrives. Readings are not cached
@@ -84,7 +84,7 @@ class MojElektroCoordinator(DataUpdateCoordinator[BalanceSnapshot]):
         self._refresh_lock = asyncio.Lock()
 
     def async_schedule_daily_refresh(self) -> None:
-        """Listen for 00:05 local time. Safe to call again after a reload."""
+        """Listen for 06:05 local time. Safe to call again after a reload."""
         self._cancel_daily()
         self._unsub_daily = async_track_time_change(
             self.hass,
@@ -101,7 +101,7 @@ class MojElektroCoordinator(DataUpdateCoordinator[BalanceSnapshot]):
         await super().async_shutdown()
 
     async def _handle_daily_refresh(self, _now: datetime) -> None:
-        """Fetch at 00:05 and give this night a fresh retry budget."""
+        """Fetch at 06:05 and give this day a fresh retry budget."""
         async with self._refresh_lock:
             self._cancel_retry()
             self._retries_left = DAILY_RETRY_ATTEMPTS
@@ -109,7 +109,7 @@ class MojElektroCoordinator(DataUpdateCoordinator[BalanceSnapshot]):
         await self._refresh_or_retry()
 
     async def _handle_retry(self, _now: datetime) -> None:
-        """One delayed attempt after a failed nightly fetch."""
+        """One delayed attempt after a failed daily fetch."""
         self._unsub_retry = None
         await self._refresh_or_retry()
 
